@@ -1,0 +1,59 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <title>First D3 app</title>
+  </head>
+  <body>
+    <div id="vizcontainer">
+      <svg
+        style="width: 500px; height: 500px; border: 1px lightgray solid"
+      ></svg>
+    </div>
+    <script type="text/javascript">
+      console.log("Hey there");
+      // Load the cities:
+      d3.csv("../data/cities.csv", (err, data) => {
+        if (err) console.console.error(err);
+        else {
+          processData(data);
+
+          // Remove some of the bars:
+          let new_arr = [1, 2, 3, 4];
+
+          d3.select("svg").selectAll("rect").data(new_arr).exit().remove();
+        }
+      });
+
+      const processData = (incomingData) => {
+        let max_population = d3.max(incomingData, (d) =>
+          parseInt(d.population)
+        );
+        let y_scale = d3
+          .scaleLinear()
+          .domain([0, max_population])
+          .range([0, 480]);
+        let rect_width = 30; // pixels
+
+        console.log(y_scale(incomingData[2].population));
+        console.log(y_scale(incomingData[3].population));
+        console.log(y_scale(incomingData[4].population));
+
+        d3.select("svg")
+          .selectAll("rect")
+          .data(incomingData)
+          .enter()
+          .append("rect")
+          .attr("class", "bar")
+          .attr("x", (d, i) => 2 * i * rect_width)
+          .attr("y", (d) => 480 - y_scale(parseInt(d.population)))
+          .attr("width", rect_width)
+          .attr("height", (d) => y_scale(parseInt(d.population)))
+          .style("stroke", "gray")
+          .style("fill", "green")
+          .style("stroke-width", "3px");
+      };
+    </script>
+  </body>
+</html>
